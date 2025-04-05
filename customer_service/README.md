@@ -26,7 +26,7 @@ The application uses **PostgreSQL** as the database to store customer and addres
 
 ## File Structure
 
-Here is the detailed file structure of the backend:
+Here is the detailed file structure of Customer Service:
 
 ```
 ecommerce-microservices/
