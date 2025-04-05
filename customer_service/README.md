@@ -6,6 +6,7 @@ This repository contains the backend for the **CustomerService** application, bu
 
 - [Features](#features)
 - [Database](#database)
+- [File Structure](#file-structure)
 - [Running the Application](#running-the-application)
   - [Run with Docker](#run-with-docker)
   - [Run without Docker](#run-without-docker)
@@ -22,6 +23,39 @@ This repository contains the backend for the **CustomerService** application, bu
 ## Database
 
 The application uses **PostgreSQL** as the database to store customer and address information.
+
+## File Structure
+
+Here is the detailed file structure of the backend:
+
+```
+ecommerce-microservices/
+└── customer-service/
+    ├── customers/             # Django app
+    │   ├── migrations/
+    │   │   └── __init__.py
+    │   ├── __init__.py
+    │   ├── admin.py
+    │   ├── apps.py
+    │   ├── models.py          # Define models Customer, Address
+    │   ├── serializers.py     # Define serializers
+    │   ├── tests.py
+    │   ├── urls.py            # URLs for app 'customers'
+    │   └── views.py           # Views (API endpoints)
+    ├── customer_service/      # Django project settings
+    │   ├── __init__.py
+    │   ├── asgi.py
+    │   ├── settings.py        # Setup project, database
+    │   ├── urls.py            # The main URLS of Project
+    │   └── wsgi.py            # WSGI application for deployment
+    ├── .dockerignore
+    ├── .env                   # Environment variables (DB credentials, etc.)
+    ├── Dockerfile             # Dockerfile to build Docker image
+    ├── docker-compose.yml     # Docker compose to run customer_service (Django + PostgreSQL)
+    ├── manage.py
+    ├── requirements.txt       # Project dependencies
+    └── README.md               # This README file
+```
 
 ## Running the Application
 
