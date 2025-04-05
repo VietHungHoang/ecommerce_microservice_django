@@ -1,0 +1,52 @@
+# customer-service/docker-compose.yml
+version: '3.8'
+
+services:
+  customer-db:
+    image: postgres:15 # Sử dụng image PostgreSQL version 15
+    container_name: customer_db_container # Tên container cụ thể
+    volumes:
+      - customer_postgres_data:/var/lib/postgresql/data/ # Volume để lưu trữ dữ liệu DB persistent
+    env_file:
+      - .env # Đọc biến môi trường từ file .env
+    environment:
+      # Biến môi trường này được Postgres sử dụng để khởi tạo DB lần đầu
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5433:5432" # Map port 5433 trên máy host tới port 5432 trong container DB
+    networks:
+      - ecommerce-network # Kết nối service này vào mạng chung
+
+  customer-service:
+    container_name: customer_service_container
+    build: . # Build image từ Dockerfile trong thư mục hiện tại
+    volumes:
+      - .:/app # Mount code từ host vào container để live reload khi phát triển
+    ports:
+      - "8001:8000" # Map port 8001 trên máy host tới port 8000 trong container app
+    env_file:
+      - .env # Đọc biến môi trường từ file .env
+    environment:
+      # Đảm bảo Django kết nối đúng host DB (tên service trong docker-compose)
+      POSTGRES_HOST: customer-db
+      POSTGRES_PORT: 5432
+      WAIT_HOSTS: customer-db:5432 # (Tùy chọn) Sử dụng wait-for-it hoặc tương tự để chờ DB sẵn sàng
+    depends_on:
+      - customer-db # Service này phụ thuộc vào customer-db, cần khởi động sau
+    command: > # Ghi đè CMD trong Dockerfile để chạy migrate trước khi khởi động server
+      sh -c "python manage.py migrate &&
+             gunicorn customer_service.wsgi:application --bind 0.0.0.0:8000"
+      # Hoặc dùng runserver để debug:
+      # sh -c "python manage.py migrate &&
+      #        python manage.py runserver 0.0.0.0:8000"
+    networks:
+      - ecommerce-network # Kết nối service này vào mạng chung
+
+volumes:
+  customer_postgres_data: # Định nghĩa volume cho DB
+
+networks:
+  ecommerce-network: # Định nghĩa mạng chung cho các services
+    driver: bridge

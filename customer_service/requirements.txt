@@ -1,0 +1,7 @@
+# customer-service/requirements.txt
+Django>=4.0,<5.0
+djangorestframework>=3.14,<3.15
+psycopg2-binary>=2.9,<3.0  # PostgreSQL adapter
+python-dotenv>=1.0,<2.0   # Đọc biến môi trường từ .env
+gunicorn>=20.0,<21.0      # WSGI server (for production in Docker)
+django-environ>=0.11,<0.12 # Cách khác để quản lý settings từ env (nâng cao hơn) - có thể dùng os.getenv đơn giản hơn
